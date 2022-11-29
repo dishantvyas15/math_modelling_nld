@@ -1,7 +1,7 @@
 %% Initialize vars
 
 close all; clear; clc;
-growth_ibm = readmatrix('growth_ibm.dat');
+growth_ibm = readmatrix('Data/growth_ibm.dat');
 
 rev = growth_ibm(:,1);
 hr = growth_ibm(:,2);
@@ -55,11 +55,11 @@ cum_rev_est = (cum_rev_eta + (cum_rev_c^(-rev_alpha))*(exp(-rev_alpha*rev_lambda
 
 
 figure(2);
-loglog(year, rev);
+loglog(year, rev, '+');
 hold on;
 loglog(year, rev_est);
 hold on;
-loglog(year, cum_rev);
+loglog(year, cum_rev, 'x');
 hold on;
 loglog(year, cum_rev_est);
 hold on;
@@ -71,11 +71,11 @@ legend('Actual Revenue', 'Analytically estimated Revenue', 'Actual Cumulative Re
 % saveas(gcf, '2__rev_loglog.png', 'png');
 
 figure(3);
-semilogy(year, rev);
+semilogy(year, rev, '+');
 hold on;
 semilogy(year, rev_est);
 hold on;
-semilogy(year, cum_rev);
+semilogy(year, cum_rev, '*');
 hold on;
 semilogy(year, cum_rev_est);
 hold on;
@@ -103,7 +103,7 @@ hr_c = hr_c/length(year);
 hr_est = (hr_eta + (hr_c^(-hr_alpha))*(exp(-hr_alpha*hr_lambda*year))).^(-1/hr_alpha);
 
 figure(4);
-loglog(year, hr);
+loglog(year, hr, '+');
 hold on;
 loglog(year, hr_est);
 hold on;
@@ -115,7 +115,7 @@ legend('Actual HR Strength', 'Analytically estimated HR Strength', 'location', '
 % saveas(gcf, '4__hr_loglog.png', 'png');
 
 figure(5);
-semilogy(year, hr);
+semilogy(year, hr, '+');
 hold on;
 semilogy(year, hr_est);
 hold on;
@@ -173,26 +173,74 @@ d_by_dt_rev_est = rev_lambda*rev_est.*(1-rev_eta*rev_est.^rev_alpha);
 d_by_dt_hr = hr_lambda*hr.*(1-hr_eta*hr.^hr_alpha);
 d_by_dt_hr_est = hr_lambda*hr_est.*(1-hr_eta*hr_est.^hr_alpha);
 
+drev = rev;
+for i=2:length(rev)
+    drev(i)=rev(i)-rev(i-1);
+end
+
+dhr = hr;
+for i=2:length(hr)
+    dhr(i)=hr(i)-hr(i-1);
+end
+
 figure(8);
+subplot(1,2,1);
 plot(rev, d_by_dt_rev);
 hold on;
 plot(rev_est, d_by_dt_rev_est);
 hold on;
 title('IBM Revenue values displaying parabolic behavior of Logistic Equation')
 xlabel('Revenue');
-ylabel('(d/dt)(Revenue)');
+ylabel('(d/dt)(Revenue) found through DE');
 grid on;
-legend('Actual Revenue', 'Estimated Revenue', 'location', 'south');
-saveas(gcf, '8__rev_parabola.png', 'png');
+legend('Ideal', 'Actual', 'location', 'south');
+subplot(1,2,2);
+plot(rev, d_by_dt_rev);
+hold on;
+plot(rev, drev, '+');
+hold on;
+title('IBM Revenue values displaying parabolic behavior of Logistic Equation')
+xlabel('Revenue');
+ylabel('(\delta/\deltat)(Revenue)');
+grid on;
+legend('Ideal', 'Actual', 'location', 'south');
+% saveas(gcf, '8__rev_parabola.png', 'png');
 
 figure(9);
+subplot(1,2,1);
 plot(hr, d_by_dt_hr);
 hold on;
 plot(hr_est, d_by_dt_hr_est);
 hold on;
 title('IBM HR Strength values failing to display parabolic behavior of Logistic Equation')
 xlabel('HR Strength');
-ylabel('(d/dt)(HR Strength)');
+ylabel('(\delta/\deltat)(HR Strength)');
 grid on;
-legend('Actual HR Strength', 'Estimated HR Strength', 'location', 'south');
-saveas(gcf, '9__hr_parabola.png', 'png');
+legend('Ideal', 'Actual', 'location', 'south');
+subplot(1,2,2);
+plot(hr, d_by_dt_hr);
+hold on;
+plot(hr, dhr, '+');
+hold on;
+title('IBM HR Strength values failing to display parabolic behavior of Logistic Equation')
+xlabel('HR Strength');
+ylabel('(\delta/\deltat)(HR Strength)');
+grid on;
+legend('Ideal', 'Actual', 'location', 'south');
+% saveas(gcf, '9__hr_parabola.png', 'png');
+
+
+
+
+%% Revenue vs. HR Strength
+
+figure(10);
+loglog(hr, cum_rev);
+hold on;
+loglog(linspace(1e3,1e6,1000), 1e92*linspace(1e3,1e6,1000)*0.8*1e-93);
+hold on;
+title('IBM HR Strength vs. Cumulative Revenue')
+xlabel('HR Strength');
+ylabel('Cumulative Revenue');
+grid on;
+% saveas(gcf, '10__hr_vs_cum_rev.png', 'png');
