@@ -245,10 +245,13 @@ legend('Ideal', 'Actual', 'location', 'south');
 figure(10);
 loglog(hr, cum_rev);
 hold on;
-loglog(linspace(1e3,1e6,1000), 1e92*linspace(1e3,1e6,1000)*0.8*1e-93);
+coeffs = polyfit(log(hr), log(cum_rev), 1);
+loglog(hr, exp(polyval(coeffs, log(hr))));
+
 hold on;
 title('IBM HR Strength vs. Cumulative Revenue')
 xlabel('HR Strength');
 ylabel('Cumulative Revenue');
+legend('Actual', 'Fitted', 'location', 'southeast');
 grid on;
 % saveas(gcf, '10__hr_vs_cum_rev.png', 'png');
