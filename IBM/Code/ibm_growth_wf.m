@@ -169,32 +169,40 @@ legend('Manipulated HR Strength', 'HR Strength fitting line');
 %% Differential Equations' plotting
 
 d_by_dt_rev = rev_lambda*rev.*(1-rev_eta*rev.^rev_alpha);
-d_by_dt_rev_est = rev_lambda*rev_est.*(1-rev_eta*rev_est.^rev_alpha);
 d_by_dt_hr = hr_lambda*hr.*(1-hr_eta*hr.^hr_alpha);
-d_by_dt_hr_est = hr_lambda*hr_est.*(1-hr_eta*hr_est.^hr_alpha);
 
-drev = rev;
+drev1 = rev;
 for i=2:length(rev)
-    drev(i)=rev(i)-rev(i-1);
+    drev1(i) = rev(i)-rev(i-1);
 end
+drev2 = rev;
+for i=1:length(rev)-1
+    drev2(i) = rev(i+1)-rev(i);
+end
+drev = (drev1+drev2)/2;
 
-dhr = hr;
+dhr1 = hr;
 for i=2:length(hr)
-    dhr(i)=hr(i)-hr(i-1);
+    dhr1(i)=hr(i)-hr(i-1);
 end
+dhr2 = hr;
+for i=1:length(hr)-1
+    dhr2(i) = hr(i+1)-hr(i);
+end
+dhr = (dhr1+dhr2)/2;
 
 figure(8);
-subplot(1,2,1);
-plot(rev, d_by_dt_rev);
-hold on;
-plot(rev_est, d_by_dt_rev_est);
-hold on;
-title('IBM Revenue values displaying parabolic behavior of Logistic Equation')
-xlabel('Revenue');
-ylabel('(d/dt)(Revenue) found through DE');
-grid on;
-legend('Ideal', 'Actual', 'location', 'south');
-subplot(1,2,2);
+% subplot(1,2,1);
+% plot(rev, d_by_dt_rev);
+% hold on;
+% plot(rev_est, d_by_dt_rev_est);
+% hold on;
+% title('IBM Revenue values displaying parabolic behavior of Logistic Equation')
+% xlabel('Revenue');
+% ylabel('(d/dt)(Revenue) found through DE');
+% grid on;
+% legend('Ideal', 'Actual', 'location', 'south');
+% subplot(1,2,2);
 plot(rev, d_by_dt_rev);
 hold on;
 plot(rev, drev, '+');
@@ -207,17 +215,17 @@ legend('Ideal', 'Actual', 'location', 'south');
 % saveas(gcf, '8__rev_parabola.png', 'png');
 
 figure(9);
-subplot(1,2,1);
-plot(hr, d_by_dt_hr);
-hold on;
-plot(hr_est, d_by_dt_hr_est);
-hold on;
-title('IBM HR Strength values failing to display parabolic behavior of Logistic Equation')
-xlabel('HR Strength');
-ylabel('(\delta/\deltat)(HR Strength)');
-grid on;
-legend('Ideal', 'Actual', 'location', 'south');
-subplot(1,2,2);
+% subplot(1,2,1);
+% plot(hr, d_by_dt_hr);
+% hold on;
+% plot(hr_est, d_by_dt_hr_est);
+% hold on;
+% title('IBM HR Strength values failing to display parabolic behavior of Logistic Equation')
+% xlabel('HR Strength');
+% ylabel('(\delta/\deltat)(HR Strength)');
+% grid on;
+% legend('Ideal', 'Actual', 'location', 'south');
+% subplot(1,2,2);
 plot(hr, d_by_dt_hr);
 hold on;
 plot(hr, dhr, '+');
